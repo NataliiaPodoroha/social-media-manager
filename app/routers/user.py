@@ -4,7 +4,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
 from app.schemas.user import UserCreate, UserOut, UserUpdate
-from app.auth.auth import create_access_token, authenticate_user, get_current_active_user
+from app.auth.auth import (
+    create_access_token,
+    authenticate_user,
+    get_current_active_user,
+)
 from app.crud.user import create_user, get_user_by_username, update_user
 from dependencies import get_db
 from app.models.user import User
@@ -26,10 +30,12 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login_user(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
 ):
-    user = authenticate_user(db, username=form_data.username, password=form_data.password)
+    user = authenticate_user(
+        db, username=form_data.username, password=form_data.password
+    )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -46,19 +52,19 @@ def login_user(
 
 
 @router.get("/me", response_model=UserOut)
-def read_user_profile(
-        current_user: User = Depends(get_current_active_user)
-):
+def read_user_profile(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
 @router.put("/me", response_model=UserOut)
 def update_user_profile(
-        user_update: UserUpdate,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user),
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
 ):
-    updated_user = update_user(db=db, user_id=current_user.id, user_update=user_update)
+    updated_user = update_user(
+        db=db, user_id=current_user.id, user_update=user_update
+    )
     if not updated_user:
         raise HTTPException(
             status_code=404,

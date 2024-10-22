@@ -15,7 +15,9 @@ class Comment(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
     is_blocked = Column(Boolean, default=False)
-    parent_comment_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
+    parent_comment_id = Column(
+        Integer, ForeignKey("comments.id"), nullable=True
+    )
 
     post = relationship("Post", back_populates="comments")
     owner = relationship("User", back_populates="comments")
