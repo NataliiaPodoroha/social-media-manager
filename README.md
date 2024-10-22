@@ -57,10 +57,14 @@ This project is a web application that allows users to register, log in, create 
 9. Refer to the `.env.sample` file for an example of how to structure your `.env` file.
 
 
-10. Run the application:
+## Running the Application
+
+1. Start the FastAPI server:
     ```sh
     uvicorn app.main:app --reload
     ```
+
+2. Access the API documentation at `http://127.0.0.1:8000/docs`.
 
 ## Usage
 
