@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from app.models.post import Post
 from app.schemas.post import PostCreate
 from app.services.moderation import moderate_text
@@ -19,9 +19,12 @@ def create_post(db: Session, post: PostCreate, user_id: int) -> Post:
 
 def get_all_posts(db: Session, skip: int = 0, limit: int = 10) -> list[Post]:
     return (
-        db.query(Post).filter(
-            Post.is_blocked == False
-        ).offset(skip).limit(limit).all()
+        db.query(Post)
+        .filter(Post.is_blocked == False)
+        .options(selectinload(Post.owner), selectinload(Post.comments))
+        .offset(skip)
+        .limit(limit)
+        .all()
     )
 
 
@@ -43,6 +46,7 @@ def get_posts_by_owner(
     return (
         db.query(Post)
         .filter(Post.owner_id == user_id, Post.is_blocked == False)
+        .options(selectinload(Post.owner), selectinload(Post.comments))
         .offset(skip)
         .limit(limit)
         .all()
