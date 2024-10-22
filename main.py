@@ -1,16 +1,14 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+from fastapi import FastAPI
+from database import Base, engine
+from app.routers import user, post, comment
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+app = FastAPI()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+Base.metadata.create_all(bind=engine)
+
+
+app.include_router(user.router, prefix="/users", tags=["Users"])
+app.include_router(post.router, prefix="/posts", tags=["Posts"])
+app.include_router(comment.router, prefix="/comments", tags=["Comments"])
