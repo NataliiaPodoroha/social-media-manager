@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -68,10 +68,12 @@ def delete_comment_endpoint(
     delete_comment(db=db, comment_id=comment_id)
 
 
-@router.get("/analytics/", response_model=List[CommentAnalytics])
+@router.get("/analytics/daily-stats", response_model=List[CommentAnalytics])
 def get_comments_analytics(
-    date_from: datetime,
-    date_to: datetime,
+        date_from: datetime = Query(
+            ..., description="Start date for the period (YYYY-MM-DD)"
+        ),
+        date_to: datetime = Query(..., description="End date for the period (YYYY-MM-DD)"),
     db: Session = Depends(get_db),
 ):
     return get_comment_analytics(db=db, date_from=date_from, date_to=date_to)
